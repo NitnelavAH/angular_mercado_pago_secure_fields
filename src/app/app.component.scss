@@ -1,0 +1,153 @@
+.er-secure-fields {
+
+    width: 100%;
+    max-width: 500px;
+    margin: 0 auto;
+    padding: 16px;
+    box-sizing: border-box;
+
+    #form-checkout {
+        display: flex;
+        flex-direction: column;
+        max-width: 600px;
+        font-family: "Nunito Sans";
+        margin: 0 auto;
+    }
+
+    .container {
+        height: 43px;
+        display: inline-block;
+        border: none;
+        background-color: rgba(228, 229, 237, 0.3);
+        border-radius: 4px;
+        padding: 4px 10px;
+        font-size: 16px;
+        font-weight: 500;
+        margin-top: 14px;
+        min-width: 110px;
+    }
+
+    .error {
+        display: block;
+        color: red;
+        font-size: 12px;
+        margin-top: 4px;
+        padding-left: 4px;
+    }
+
+    .errorField {
+        border: 1px solid red;
+    }
+
+
+
+
+}
+
+
+.er-card-help {
+    position: relative;
+    width: 100%;
+    max-width: 328px;
+    margin: 32px auto 8px;
+    color: white;
+
+    .ic-tarjeta-frontal {
+        background-image: url("/assets/icon/card-front.svg");
+        background-repeat: no-repeat;
+        background-attachment: scroll;
+        background-position: 50% 0%;
+        width: 100%;
+        max-width: 314px;
+        height: 180px;
+
+        padding: 35px 20px 25px 35px;
+        box-sizing: border-box;
+    }
+
+    .ic-tarjeta-back {
+        background-image: url("/assets/icon/card-back.svg");
+        color: rgb(44, 193, 44);
+    }
+}
+
+.er-tarjeta-info {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    width: 230px;
+}
+
+
+.er-tarjeta-back-cvv {
+    width: 56px;
+    height: 32px;
+    background-color: white;
+    border-radius: 4px;
+    position: absolute;
+    top: 75px;
+    right: 60px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.er-cardNum {
+    height: 35px;
+}
+
+.er-card-icon {
+    width: 32px;
+}
+
+.er-card-icon-info {
+    gap: 8px;
+}
+
+.er-cardName {
+    width: 160px;
+}
+
+
+.er-button {
+    display: block;
+    margin: 24px auto 0;
+    width: 100%;
+    max-width: 320px;
+    height: 48px;
+    border-radius: 30px;
+    background-color: #0bc09e;
+    border: none;
+    cursor: pointer;
+
+    &:hover {
+        background-color: #08866e;
+    }
+
+    color: white;
+    font-size: 18px;
+    font-weight: 700;
+}
+
+.disabled-button {
+    background-color: #b3b3b3ae;
+    color: gray;
+    font-size: 16px;
+}
+
+.er-animation-card {
+    width: 70%;
+    max-width: 170px;
+    margin: 16px 0;
+}
+
+
+.er-title {
+    font-size: 18px;
+    height: 48px;
+}
+
+.display-none {
+    display: none !important;
+}
+
