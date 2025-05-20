@@ -16,7 +16,7 @@ declare const MercadoPago: any;
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss'
 })
-export class AppComponent {
+export class AppComponent implements OnDestroy, AfterViewInit {
   public amount: number = 10;
   public apiKey = '';
 
@@ -45,7 +45,7 @@ export class AppComponent {
   ) {
 
   }
-  
+
 
 
   ngAfterViewInit(): void {
@@ -55,7 +55,7 @@ export class AppComponent {
   }
 
   ngOnDestroy(): void {
-
+    this.unMountFields()
   }
 
   public async createCardToken() {
@@ -75,7 +75,7 @@ export class AppComponent {
       });
 
       let tokenOpenId = '';
-      if(this.itsOpen) {
+      if (this.itsOpen) {
         const tokenOpen = await this.mp.fields.createCardToken({
           cardNumber: (document.getElementById('form-checkout__cardNumber') as HTMLInputElement).value,
           cardExpirationDate: (document.getElementById('form-checkout__expirationDate') as HTMLInputElement).value,
@@ -142,7 +142,7 @@ export class AppComponent {
 
     (document.getElementById('form-checkout__cardholderName') as HTMLInputElement).onchange = (e) => {
       const name = (e.target as HTMLInputElement).value;
-  
+
     }
 
   }
@@ -172,10 +172,10 @@ export class AppComponent {
         console.log(results)
         const paymentMethod = results[0];
 
-       
+
 
         const icon = this.getIconCard(bin);
-  
+
 
         /* paymentMethodElement.value = paymentMethod.id; */
 
@@ -369,6 +369,24 @@ export class AppComponent {
         return 'master';
       default:
         return 'card';
+    }
+  }
+
+  private unMountFields() {
+    try {
+      // Unmount Secure Fields
+      if (this.cardNumberElement) {
+        this.cardNumberElement.unmount();
+      }
+
+      if (this.expirationDateElement) {
+        this.expirationDateElement.unmount();
+      }
+
+      if (this.securityCodeElement) {
+        this.securityCodeElement.unmount();
+      }
+    } catch (error) {
     }
   }
 
