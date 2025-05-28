@@ -1,4 +1,4 @@
-.er-secure-fields {
+.sf-secure-fields {
 
     width: 100%;
     max-width: 500px;
@@ -45,7 +45,7 @@
 }
 
 
-.er-card-help {
+.sf-card-help {
     position: relative;
     width: 100%;
     max-width: 328px;
@@ -62,7 +62,7 @@
         height: 180px;
 
         padding: 35px 20px 25px 35px;
-        box-sizing: border-box;
+        box-sizing: bordsf-box;
     }
 
     .ic-tarjeta-back {
@@ -71,7 +71,7 @@
     }
 }
 
-.er-tarjeta-info {
+.sf-tarjeta-info {
     display: flex;
     flex-direction: column;
     gap: 10px;
@@ -79,7 +79,7 @@
 }
 
 
-.er-tarjeta-back-cvv {
+.sf-tarjeta-back-cvv {
     width: 56px;
     height: 32px;
     background-color: white;
@@ -92,24 +92,24 @@
     align-items: center;
 }
 
-.er-cardNum {
+.sf-cardNum {
     height: 35px;
 }
 
-.er-card-icon {
+.sf-card-icon {
     width: 32px;
 }
 
-.er-card-icon-info {
+.sf-card-icon-info {
     gap: 8px;
 }
 
-.er-cardName {
+.sf-cardName {
     width: 160px;
 }
 
 
-.er-button {
+.sf-button {
     display: block;
     margin: 24px auto 0;
     width: 100%;
@@ -135,14 +135,14 @@
     font-size: 16px;
 }
 
-.er-animation-card {
+.sf-animation-card {
     width: 70%;
     max-width: 170px;
     margin: 16px 0;
 }
 
 
-.er-title {
+.sf-title {
     font-size: 18px;
     height: 48px;
 }

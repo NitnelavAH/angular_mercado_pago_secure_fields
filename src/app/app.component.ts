@@ -1,25 +1,26 @@
-import { AfterViewInit, Component, Inject, OnDestroy, OnInit, PLATFORM_ID, signal } from '@angular/core';
+import { AfterViewInit, Component, Inject, OnDestroy, PLATFORM_ID, signal, WritableSignal } from '@angular/core';
 
 
-
-import { ActivatedRoute, Router } from '@angular/router';
-import { isPlatformBrowser } from '@angular/common';
-import { firstValueFrom } from 'rxjs';
+import { isPlatformBrowser, JsonPipe } from '@angular/common';
 import { MercadoPagoService } from './shared/services/mercado-pago.service';
+import { CreateCardTokenI } from './interfaces/mp.interface';
 
 
 declare const MercadoPago: any;
 
 @Component({
   selector: 'app-root',
-  imports: [],
+  imports: [
+    JsonPipe
+  ],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss'
 })
 export class AppComponent implements OnDestroy, AfterViewInit {
-  public amount: number = 10;
-  public apiKey = '';
-
+  
+  // ---------------SET YOUTR APIKEY----------------
+  public apiKey = ''; 
+  // ---------------SET YOUTR APIKEY----------------
 
   public valid = signal(false);
   public loaded = signal(false);
@@ -27,7 +28,7 @@ export class AppComponent implements OnDestroy, AfterViewInit {
 
 
   public showLoader = signal(false);
-  private itsOpen = false;
+  public token: WritableSignal<CreateCardTokenI | null> = signal(null);
 
 
   //MP
@@ -38,8 +39,6 @@ export class AppComponent implements OnDestroy, AfterViewInit {
   private currentBin: string = '';
 
   constructor(
-    private activatedRoute: ActivatedRoute,
-    private router: Router,
     private mercadoPagoService: MercadoPagoService,
     @Inject(PLATFORM_ID) private platformId: string
   ) {
@@ -50,7 +49,7 @@ export class AppComponent implements OnDestroy, AfterViewInit {
 
   ngAfterViewInit(): void {
     if (isPlatformBrowser(this.platformId)) {
-      this.loadParams();
+      this.initForm();
     }
   }
 
@@ -62,7 +61,6 @@ export class AppComponent implements OnDestroy, AfterViewInit {
     this.clearErrors();
 
     const tokenElement = document.getElementById('token') as HTMLInputElement;
-    const formElement = document.getElementById('form-checkout') as HTMLFormElement;
     console.log(tokenElement.value)
 
     try {
@@ -74,21 +72,8 @@ export class AppComponent implements OnDestroy, AfterViewInit {
         securityCode: (document.getElementById('form-checkout__securityCode') as HTMLInputElement).value,
       });
 
-      let tokenOpenId = '';
-      if (this.itsOpen) {
-        const tokenOpen = await this.mp.fields.createCardToken({
-          cardNumber: (document.getElementById('form-checkout__cardNumber') as HTMLInputElement).value,
-          cardExpirationDate: (document.getElementById('form-checkout__expirationDate') as HTMLInputElement).value,
-          cardholderName: (document.getElementById('form-checkout__cardholderName') as HTMLInputElement).value,
-          securityCode: (document.getElementById('form-checkout__securityCode') as HTMLInputElement).value,
-        });
-
-        tokenOpenId = tokenOpen.id;
-      }
-
-      console.log(token, tokenOpenId)
+      this.token.update(() => token ? token : null)
       tokenElement.value = token.id;
-      const deviceId = this.mercadoPagoService.getDeviceId;
 
     } catch (e) {
       console.log(e)
@@ -97,9 +82,7 @@ export class AppComponent implements OnDestroy, AfterViewInit {
         this.showErrors(e);
       } else {
         console.error('Error creating card token:', e);
-        this.router.navigate(['nueva-tarjeta', 'error'], {
-          queryParams: { token: '' },
-        });
+
       }
 
     }
@@ -134,7 +117,6 @@ export class AppComponent implements OnDestroy, AfterViewInit {
 
     this.cardNumberElement.on('binChange', this.onBinChange.bind(this));
 
-    this.securityCodeElement.on('blur', this.blurCvv.bind(this));
 
     this.securityCodeElement.on('focus', this.clearError.bind(this));
     this.cardNumberElement.on('focus', this.clearError.bind(this));
@@ -157,14 +139,14 @@ export class AppComponent implements OnDestroy, AfterViewInit {
   private async onBinChange(data: any) {
     console.log(data, this.cardNumberElement)
     const bin = data.bin;
-    /*     const paymentMethodElement = document.getElementById('paymentMethodId') as HTMLInputElement; */
-    /*  const issuerElement = document.getElementById('form-checkout__issuer') as HTMLSelectElement;
-     const installmentsElement = document.getElementById('form-checkout__installments') as HTMLSelectElement; */
+    const paymentMethodElement = document.getElementById('paymentMethodId') as HTMLInputElement;
+    const issuerElement = document.getElementById('form-checkout__issuer') as HTMLSelectElement;
+    const installmentsElement = document.getElementById('form-checkout__installments') as HTMLSelectElement;
 
-    /*  if (!bin && paymentMethodElement.value) {
-       this.clearSelects(issuerElement, installmentsElement);
-       paymentMethodElement.value = '';
-     } */
+    if (!bin && paymentMethodElement.value) {
+      this.clearSelects(issuerElement, installmentsElement);
+      paymentMethodElement.value = '';
+    }
 
     if (bin && bin !== this.currentBin) {
       try {
@@ -174,10 +156,7 @@ export class AppComponent implements OnDestroy, AfterViewInit {
 
 
 
-        const icon = this.getIconCard(bin);
-
-
-        /* paymentMethodElement.value = paymentMethod.id; */
+        paymentMethodElement.value = paymentMethod.id;
 
         this.updatePCIFieldsSettings(paymentMethod);
         await this.updateIssuer(paymentMethod, bin);
@@ -220,18 +199,18 @@ export class AppComponent implements OnDestroy, AfterViewInit {
       console.log(issuers)
     }
 
-    /*   this.populateSelect(issuerElement, issuers, { label: 'name', value: 'id' }); */
+    this.populateSelect(issuerElement, issuers, { label: 'name', value: 'id' });
   }
 
   private async updateInstallments(paymentMethod: any, bin: string) {
     try {
-      /*       const amount = (document.getElementById('transactionAmount') as HTMLInputElement).value; */
-      console.log(this.amount)
-      const installments = await this.mp.getInstallments({ amount: this.amount.toString(), bin, paymentTypeId: paymentMethod.payment_type_id });
+      const amount = (document.getElementById('transactionAmount') as HTMLInputElement).value;
+
+      const installments = await this.mp.getInstallments({ amount, bin, paymentTypeId: paymentMethod.payment_type_id });
       console.log(installments)
-      /*  const installmentOptions = installments[0].payer_costs;
-       const installmentsElement = document.getElementById('form-checkout__installments')!;
-       this.populateSelect(installmentsElement, installmentOptions, { label: 'recommended_message', value: 'installments' }); */
+      const installmentOptions = installments[0].payer_costs;
+      const installmentsElement = document.getElementById('form-checkout__installments')!;
+      this.populateSelect(installmentsElement, installmentOptions, { label: 'recommended_message', value: 'installments' });
     } catch (e) {
       console.error('Error getting installments:', e);
     }
@@ -268,9 +247,6 @@ export class AppComponent implements OnDestroy, AfterViewInit {
     }
   }
 
-  private blurCvv(data: any) {
-
-  }
 
   private showErrors(errors: { field: string, message: string, cause: string }[]) {
     try {
@@ -316,61 +292,7 @@ export class AppComponent implements OnDestroy, AfterViewInit {
   }
 
 
-  private loadParams() {
-    const queryParams = this.activatedRoute.snapshot.queryParams;
-    if (Object.keys(queryParams).length === 0) {
-      this.router.navigate(['nueva-tarjeta', 'error'], {
-        queryParams: { token: '-' },
-      });
-      return;
-    }
 
-    const data = queryParams['data'];
-    if (data) {
-      this.initForm();
-
-    }
-
-    const retry = queryParams['retry'];
-
-    if (Array.isArray(retry) && retry?.length >= 3) {
-      this.showLoader.update(s => true);
-      return
-    };
-
-    //RELOAD PAGE TO ALLOW APP DETECT URL CHANGES AND GET THE DATA(if the first time the url change detection fails)
-    if (queryParams['token']) {
-      this.showLoader.update(s => true);
-
-      setTimeout(() => {
-        this.retryRedirectToApp();
-      }, 5000);
-    }
-  }
-
-
-  private retryRedirectToApp() {
-    const appLink = `${window.location.href}&retry=${new Date().getTime()}`
-
-    setTimeout(() => {
-      window.location.href = appLink;
-    }, 100);
-  }
-
-  private getIconCard(card: string) {
-    const strCard = card.charAt(0);
-
-    switch (strCard) {
-      case '3':
-        return 'amex';
-      case '4':
-        return 'visa';
-      case '5':
-        return 'master';
-      default:
-        return 'card';
-    }
-  }
 
   private unMountFields() {
     try {

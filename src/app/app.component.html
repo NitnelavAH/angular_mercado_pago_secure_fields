@@ -1,50 +1,73 @@
-<div class="er-secure-fields">
+<div class="sf-secure-fields">
+
+  <h2>
+    Set your mercado pago apikey on app.component.ts and reload 👀
+  </h2>
+
+  <pre>
+    // ---------------SET YOUTR APIKEY----------------
+  public apiKey = ''; 
+  // ---------------SET YOUTR APIKEY----------------
+  </pre>
 
 
   <form id="form-checkout" [class.display-none]="showLoader()">
-      <div id="form-checkout__cardNumber" class="container"></div>
-      <small class="error" id="cardNumber-error"></small>
+    <div id="form-checkout__cardNumber" class="container"></div>
+    <small class="error" id="cardNumbsf-error"></small>
 
-      <input type="text" id="form-checkout__cardholderName" placeholder="Nombre del Tarjetahabiente"
-          class="container" />
-      <small class="error" id="cardholderName-error"></small>
+    <input type="text" id="form-checkout__cardholderName" placeholder="Nombre del Tarjetahabiente" class="container" />
+    <small class="error" id="cardholderName-error"></small>
 
-      <div class="er-flex-row gap-8">
-          <div class="er-flex-column">
-              <div id="form-checkout__expirationDate" class="container"></div>
-              <small class="error" id="expirationDate-error"></small>
-          </div>
-
-          <div class="er-flex-column">
-              <div id="form-checkout__securityCode" class="container"></div>
-              <small class="error" id="securityCode-error"></small>
-          </div>
+    <div class="sf-flex-row gap-8">
+      <div class="sf-flex-column">
+        <div id="form-checkout__expirationDate" class="container"></div>
+        <small class="error" id="expirationDate-error"></small>
       </div>
 
-      <!--    <select id="form-checkout__issuer" name="issuer">
-        <option value="" disabled selected>Banco emisor</option>
-      </select>
-      <select id="form-checkout__installments" name="installments">
-        <option value="" disabled selected>Cuotas</option>
-      </select> -->
-      <!--         <input type="email" id="form-checkout__email" name="email" placeholder="E-mail" /> -->
+      <div class="sf-flex-column">
+        <div id="form-checkout__securityCode" class="container"></div>
+        <small class="error" id="securityCode-error"></small>
+      </div>
+    </div>
 
-      <input id="token" name="token" type="hidden">
-      <!--         <input id="paymentMethodId" name="paymentMethodId" type="hidden">
-      <input id="transactionAmount" name="transactionAmount" type="hidden" value="100">
-      <input id="description" name="description" type="hidden" value="Nome do Produto"> -->
+
+    <h4>
+      OPTIONAL FIELDS ⬇️
+    </h4>
+    <!-- OPTIONAL FIELDS, IF YOU ONLY NEED GENERATE CARD TOKEN -->
+    <select id="form-checkout__issuer" name="issuer" class="container">
+      <option value="" disabled selected>Banco emisor</option>
+    </select>
+    <select id="form-checkout__installments" name="installments" class="container">
+      <option value="" disabled selected>Cuotas</option>
+    </select>
+    <input type="email" id="form-checkout__email" name="email" placeholder="E-mail" class="container"/>
+    <!-- OPTIONAL FIELDS, IF YOU ONLY NEED GENERATE CARD TOKEN -->
+    
+    
+    
+    <input id="token" name="token" type="hidden">
+
+    <input id="paymentMethodId" name="paymentMethodId" type="hidden">
+    <input id="transactionAmount" name="transactionAmount" type="hidden" value="666">
+    <input id="description" name="description" type="hidden" value="Nome do Produto">
 
 
   </form>
 
 
 
-  <button class="er-button" (click)="createCardToken()" *transloco="let t; prefix: 'card'"
-      [class.disabled-button]="!loaded()" [class.display-none]="showLoader()">
-      {{t(loaded() ? 'continue' : 'wait') }}
+  <button class="sf-button" (click)="createCardToken()" [class.disabled-button]="!loaded()"
+    [class.display-none]="showLoader()">
+    {{loaded() ? 'continue' : 'wait' }}
   </button>
 
- 
+  @if(token()) {
+    <h3>TOKEN MERCADO PAGO</h3>
+    <pre>
+      {{token() | json}}
+    </pre>
+  }
+
+
 </div>
-
-
