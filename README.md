@@ -1,5 +1,9 @@
 # MercadoPagoSecureFields
 
+Mercado Pago Secure Fileds Example on Angular 19
+
+Set your Mercado Pago Api Key first at app.component.ts and reload
+
 This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 19.2.9.
 
 ## Development server
