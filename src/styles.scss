@@ -1,1 +1,13 @@
 /* You can add global styles to this file, and also import other style files */
+.sf-flex-column {
+    display: flex;
+    flex-direction: column;
+}
+
+.sf-flex-row {
+    display: flex;
+}
+
+.gap-8 {
+ gap: 8px
+}
